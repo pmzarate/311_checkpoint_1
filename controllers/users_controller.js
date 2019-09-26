@@ -1,25 +1,49 @@
-const {users} = require('../data/sampleUser');
+const users = require('../data/index');
+const newUser = require('../data/sampleUser');
+const newID = users.length;
 
-exports.listUsers = function list (req,res) {
-    res.json(users)
-}
+const listUsers = (req,res) => {
+    res.json(users);
+};
 
-exports.showUser = function show (req,res) {
-    let users = users.find(function(item){
-        return item._id == req.params.id
-    })
-    res.json(users)
-}
+const showUser = (req,res) => {
+    let thisUser = users.some(x => x.id == req.params.id);
+      if (thisUser) {
+          res.json(users.filter(i => i.id == req.params.id))
+      } else {
+          res.status(400).json ({msg: `User ${req.params.id} does not exist`})
+      }
+};
+
+const createUser = (req,res) => {
+    users.push(newUser);
+    res.send(newUser);
+};
+
+const updateUser = (req,res) => {
+    let thisUser = users.some(x => x.id == req.params.id);
+    if (thisUser) {
+        let user = users.findIndex(i => i.id == req.params.id);
+        users[user] = req.body
+        res.json(user);
+    } else {
+        res.status(404).json({ msg: `User ${req.params.id} does not exist`})
+    }
+};
+
+const deleteUser = (req,res) => {
+    let thisUser = users.some(x => x.id == req.params.id)
+    if (thisUser) {
+        let user = user.find(i => i.id == req.params.id)
+            user.isActive = false;
+            res.send (`user ${user} removed`)
+        } else {
+            res.status(400).json({msg: `User ${req.params.id} does not exist`})
+    }
+};
 
 
-// exports.createUser = function create (req,res) {
-//     let newUser = users.length - 1;
-//     let previousId = newUser[newInfo]._id;
-//     req.body._id = previousId + 1;
-//     users.push(req.body)
-//     res.json(users)
-// }
 
-// exports.updateUser = function update (req,res) {
-//     let updatedUser = 
-// }
+
+
+module.exports = {listUsers, showUser, createUser, updateUser, deleteUser};
